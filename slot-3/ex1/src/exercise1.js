@@ -1,3 +1,4 @@
+//"Arrow function" là một cách viết ngắn gọn hơn của function expression
 const double = (x) => x * 2;
 console.log(double(5)); // Should print 10
 //cách khác có { } thì phải return

@@ -14,3 +14,7 @@ top3.forEach(c => console.log(`${c.name} - ${c.end}`));// In tên công ty và n
 // Company A - 2003
 // Company C - 2007
 // Company B - 2008
+
+// Lấy danh sách các công ty trong ngành "Tech"
+const techCompanies = companies.filter(c => c.category === "Tech");
+console.log("Tech Companies:", techCompanies);
