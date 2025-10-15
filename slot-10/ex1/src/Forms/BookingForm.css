@@ -1,0 +1,21 @@
+.booking-form-container {
+  max-width: 450px;
+  margin: 40px auto;
+}
+
+.booking-form-container h3 {
+  text-align: left;
+}
+
+.form-label {
+  font-weight: 500;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  border: none;
+}
+
+.btn-primary:hover {
+  background-color: #0069d9;
+}

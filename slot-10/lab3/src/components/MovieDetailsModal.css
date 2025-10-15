@@ -1,0 +1,61 @@
+.movie-details h5 {
+  color: #495057;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.movie-details p {
+  margin-bottom: 0.75rem;
+  line-height: 1.6;
+}
+
+.showtime-card {
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6 !important;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.showtime-card:hover {
+  background-color: #e9ecef;
+  border-color: #007bff !important;
+  transform: translateY(-1px);
+}
+
+.showtime-card .fw-bold {
+  color: #495057;
+  font-size: 0.9rem;
+}
+
+.showtime-card .text-muted {
+  font-size: 0.75rem;
+}
+
+/* Toast styling */
+.toast-container {
+  position: fixed !important;
+  top: 20px !important;
+  right: 20px !important;
+  z-index: 10000 !important;
+}
+
+.toast {
+  background-color: #d4edda !important;
+  border: 1px solid #c3e6cb !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+  min-width: 300px !important;
+}
+
+.toast .toast-header {
+  background-color: #d1ecf1 !important;
+  border-bottom: 1px solid #bee5eb !important;
+}
+
+.toast .toast-header strong {
+  color: #155724 !important;
+}
+
+.toast .toast-body {
+  color: #155724 !important;
+  font-size: 0.95rem !important;
+}

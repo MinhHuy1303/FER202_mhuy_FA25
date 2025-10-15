@@ -1,0 +1,111 @@
+.custom-navbar {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 0.5rem 0;
+}
+
+.custom-navbar .navbar-brand {
+  font-size: 1.5rem;
+  color: #fff !important;
+}
+
+.nav-link-custom {
+  color: rgba(255, 255, 255, 0.75) !important;
+  font-weight: 500;
+  padding: 0.5rem 1rem !important;
+  transition: color 0.3s ease;
+}
+
+.nav-link-custom:hover {
+  color: #fff !important;
+}
+
+.navbar-right {
+  gap: 0.5rem;
+}
+
+.search-input-with-icon {
+  width: 200px;
+  border-radius: 20px;
+  border: 1px solid #6c757d;
+  background-color: #f8f9fa;
+  padding-right: 35px;
+}
+
+.search-input-with-icon:focus {
+  border-color: #86b7fe;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+.search-icon-inside {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #6c757d;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-btn {
+  color: rgba(255, 255, 255, 0.75) !important;
+  border: none !important;
+  padding: 0.5rem !important;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.icon-btn:hover {
+  color: #fff !important;
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.icon-btn .icon {
+  width: 20px;
+  height: 20px;
+}
+
+.accounts-dropdown::after {
+  display: none;
+}
+
+.accounts-menu {
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border: 1px solid #dee2e6;
+  min-width: 200px;
+}
+
+.accounts-menu .dropdown-item {
+  padding: 0.75rem 1rem;
+  font-size: 0.9rem;
+  transition: background-color 0.2s ease;
+}
+
+.accounts-menu .dropdown-item:hover {
+  background-color: #f8f9fa;
+}
+
+/* Mobile responsive */
+@media (max-width: 991px) {
+  .navbar-right {
+    margin-top: 1rem;
+    flex-direction: column;
+    align-items: stretch !important;
+  }
+
+  .search-input {
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+
+  .d-flex.me-3 {
+    margin-bottom: 0.5rem !important;
+  }
+
+  .icon-btn {
+    justify-content: flex-start !important;
+    text-align: left;
+  }
+}
