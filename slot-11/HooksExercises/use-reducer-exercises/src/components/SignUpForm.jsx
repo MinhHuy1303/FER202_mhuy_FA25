@@ -1,6 +1,7 @@
-import React, { useState, useMemo } from 'react';
+import React, { useReducer, useMemo } from 'react';
 import { Form, Button, Card, Container, Row, Col, Modal, Toast } from 'react-bootstrap';
-
+import ModalComponent from './ModalComponent';
+import ToastComponent from './ToastComponent';
 // Regex helpers
 const isEmail = (v) => /\S+@\S+\.[A-Za-z]{2,}/.test(v);
 const isUsername = (v) => /^[A-Za-z0-9._]{3,}$/.test(v.trim());
@@ -11,21 +12,89 @@ const isStrongPassword = (v) =>
   /[^A-Za-z0-9]/.test(v) && // có ký tự đặc biệt
   v.length >= 8;            // độ dài
 
+// Action types
+const ACTION_TYPES = {
+  SET_FORM_FIELD: 'SET_FORM_FIELD',
+  SET_ERROR: 'SET_ERROR',
+  SET_ERRORS: 'SET_ERRORS',
+  SHOW_MODAL: 'SHOW_MODAL',
+  HIDE_MODAL: 'HIDE_MODAL',
+  SHOW_TOAST: 'SHOW_TOAST',
+  HIDE_TOAST: 'HIDE_TOAST',
+  RESET_FORM: 'RESET_FORM'
+};
 
-function RegisterForm() {
-  // State cho form
-  const [form, setForm] = useState({
+// Initial state
+const initialState = {
+  form: {
     username: '',
     email: '',
     password: '',
     confirm: '',
-  });
-  const [errors, setErrors] = useState({});
-  const [showModal, setShowModal] = useState(false);
-  const [showToast, setShowToast] = useState(false);
+  },
+  errors: {},
+  showModal: false,
+  showToast: false
+};
+
+// Reducer function
+const signUpReducer = (state, action) => {
+  switch (action.type) {
+    case ACTION_TYPES.SET_FORM_FIELD:
+      return {
+        ...state,
+        form: {
+          ...state.form,
+          [action.payload.name]: action.payload.value
+        }
+      };
+    case ACTION_TYPES.SET_ERROR:
+      return {
+        ...state,
+        errors: {
+          ...state.errors,
+          [action.payload.field]: action.payload.message
+        }
+      };
+    case ACTION_TYPES.SET_ERRORS:
+      return {
+        ...state,
+        errors: action.payload
+      };
+    case ACTION_TYPES.SHOW_MODAL:
+      return {
+        ...state,
+        showModal: true
+      };
+    case ACTION_TYPES.HIDE_MODAL:
+      return {
+        ...state,
+        showModal: false
+      };
+    case ACTION_TYPES.SHOW_TOAST:
+      return {
+        ...state,
+        showToast: true
+      };
+    case ACTION_TYPES.HIDE_TOAST:
+      return {
+        ...state,
+        showToast: false
+      };
+    case ACTION_TYPES.RESET_FORM:
+      return initialState;
+    default:
+      return state;
+  }
+};
+
+function SignUpForm() {
+  // Sử dụng useReducer thay vì useState
+  const [state, dispatch] = useReducer(signUpReducer, initialState);
+  const { form, errors, showModal, showToast } = state;
 
   // Validate từng trường
-  const validate = (field, value) => {
+  const validate = (field, value, currentForm = form) => {
     switch (field) {
       case 'username':
         if (!value.trim()) return 'Username is required';
@@ -41,7 +110,7 @@ function RegisterForm() {
         return '';
       case 'confirm':
         if (!value) return 'Please confirm password';
-        if (value !== form.password) return 'Passwords do not match';
+        if (value !== currentForm.password) return 'Passwords do not match';
         return '';
       default:
         return '';
@@ -52,7 +121,7 @@ function RegisterForm() {
   const formErrors = useMemo(() => {
     const e = {};
     Object.keys(form).forEach((field) => {
-      const err = validate(field, form[field]);
+      const err = validate(field, form[field], form);
       if (err) e[field] = err;
     });
     return e;
@@ -64,8 +133,29 @@ function RegisterForm() {
   // Xử lý thay đổi input
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
-    setErrors((prev) => ({ ...prev, [name]: validate(name, value) }));
+    
+    // Cập nhật form field
+    dispatch({
+      type: ACTION_TYPES.SET_FORM_FIELD,
+      payload: { name, value }
+    });
+    
+    // Cập nhật error cho field này
+    // Tạo form tạm thời với giá trị mới để validate
+    const tempForm = { ...form, [name]: value };
+    dispatch({
+      type: ACTION_TYPES.SET_ERROR,
+      payload: { field: name, message: validate(name, value, tempForm) }
+    });
+    
+    // Nếu đang thay đổi password và confirm đã có giá trị, validate lại confirm với password mới
+    if (name === 'password' && form.confirm) {
+      const confirmError = form.confirm !== value ? 'Passwords do not match' : '';
+      dispatch({
+        type: ACTION_TYPES.SET_ERROR,
+        payload: { field: 'confirm', message: confirmError }
+      });
+    }
   };
 
   // Xử lý submit
@@ -74,22 +164,24 @@ function RegisterForm() {
     // Kiểm tra lại toàn bộ lỗi
     const newErrors = {};
     Object.keys(form).forEach((field) => {
-      const err = validate(field, form[field]);
+      const err = validate(field, form[field], form);
       if (err) newErrors[field] = err;
     });
-    setErrors(newErrors);
+    
+    dispatch({
+      type: ACTION_TYPES.SET_ERRORS,
+      payload: newErrors
+    });
+    
     if (Object.keys(newErrors).length === 0) {
-      setShowToast(true);
-      setShowModal(true);
+      dispatch({ type: ACTION_TYPES.SHOW_TOAST });
+      dispatch({ type: ACTION_TYPES.SHOW_MODAL });
     }
   };
 
   // Xử lý reset form
   const handleCancel = () => {
-    setForm({ username: '', email: '', password: '', confirm: '' });
-    setErrors({});
-    setShowToast(false);
-    setShowModal(false);
+    dispatch({ type: ACTION_TYPES.RESET_FORM });
   };
 
   return (
@@ -172,30 +264,20 @@ function RegisterForm() {
 </Col>
       </Row>
       {/* Toast thông báo submit thành công */}
-      <Toast
-        show={showToast}
-        onClose={() => setShowToast(false)}
-        delay={2000}
-        autohide
-        style={{
-          position: 'fixed',
-          top: 20,
-          right: 20,
-          minWidth: 220,
-          zIndex: 9999,
-        }}
-      >
-        <Toast.Header>
-          <strong className="me-auto text-success">Success</strong>
-        </Toast.Header>
-        <Toast.Body>Submitted successfully!</Toast.Body>
-      </Toast>
-      {/* Modal hiển thị thông tin đã submit */}
-      <Modal show={showModal} onHide={handleCancel} centered>
-        <Modal.Header closeButton>
-          <Modal.Title>Sign Up Info</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
+      
+      {/* Gọi ToastComponent () */}
+        <ToastComponent
+          show={showToast}
+          message="Submitted successfully!"
+          handleClose={() => dispatch({ type: ACTION_TYPES.HIDE_TOAST })}
+        />
+      {/* Gọi ModalComponent */}
+      <ModalComponent
+        show={showModal}
+        handleClose={() => dispatch({ type: ACTION_TYPES.HIDE_MODAL })}
+
+        title="Sign Up Info"
+        body={
           <Card>
             <Card.Body>
               <p><strong>Username:</strong> {form.username}</p>
@@ -203,15 +285,10 @@ function RegisterForm() {
               <p><strong>Password:</strong> {form.password}</p>
             </Card.Body>
           </Card>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleCancel}>
-            Close
-          </Button>
-        </Modal.Footer>
-      </Modal>
+        }
+      />
     </Container>
   );
 }
 
-export default RegisterForm;
+export default SignUpForm;
