@@ -65,7 +65,20 @@ const MovieTable = () => {
               const genreName = genreMap[movie.genreId] || 'Unknown';
               return (
                 <tr key={movie.id}>
-                  <td><Image src={movie.avatar} alt={movie.title} style={{ width: '50px', height: '50px', objectFit: 'cover' }} rounded /></td>
+                  <td style={{ textAlign: 'center' }}>
+  <Image
+    src={movie.avatar}
+    alt={movie.title}
+    style={{
+      width: '100px',           // 🔼 tăng kích thước
+      height: '140px',          // 🔼 giữ tỉ lệ poster (2:3)
+      objectFit: 'cover',       // cắt đều ảnh cho vừa khung
+      borderRadius: '8px',      // bo góc ảnh
+      boxShadow: '0 2px 6px rgba(0,0,0,0.2)' // đổ bóng nhẹ
+    }}
+    thumbnail                   // thêm khung mảnh bao quanh
+  />
+</td>
                   <td>#{movie.id}</td>
                   <td>
                     <strong>{movie.title}</strong>
@@ -110,5 +123,6 @@ const MovieTable = () => {
     </>
   );
 };
+
 
 export default MovieTable;
